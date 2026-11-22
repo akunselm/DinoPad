@@ -32,7 +32,7 @@ The game retains a history of the last N button presses (default 10).
 The winning score starts at 500 unless a different goal has been saved.
 
 For complete setup, hardware wiring, troubleshooting, and repository layout:
-  ../../README.md                         (repository-root README)
-  ../../docs/HARDWARE_SETUP.md           (hardware guide)
+  ../README.md                         (repository-root README)
+  ../docs/HARDWARE_SETUP.md           (hardware guide)
 
 Unity source files and the Arduino sketch remain in this project; no bundled executable or 3D-print files are required to play the keyboard version.
