@@ -74,6 +74,8 @@ The Arduino sketch enables internal pull-up resistors, so pressing each pad conn
 
 The on-screen Jump and Duck controls also support mouse and touch.
 
+For details on the Arduino-to-Unity data flow, thread handling, and gameplay responsibilities, see [System architecture](docs/SYSTEM_ARCHITECTURE.md).
+
 ## How it works
 
 ```mermaid
