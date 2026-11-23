@@ -123,4 +123,4 @@ Open the **inner Unity project folder**, not the repository root. Its existing n
 
 This repository provides **Unity source code and Arduino firmware**, not a packaged executable, `.unitypackage`, or 3D-printable controller enclosure. Full Unity Editor execution and physical hardware testing have **not** been verified as part of this documentation update.
 
-*A game screenshot and a photo of the physical pads would make a great addition to this README when available.*
+<img width="810" height="641" alt="image" src="https://github.com/user-attachments/assets/2d4ac28c-f476-4a49-a956-f8250c069fdc" />
