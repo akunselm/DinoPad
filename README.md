@@ -1,94 +1,97 @@
 # DinoPad
 
-**A two-pad, Arduino-controlled dinosaur runner built in Unity.**
+**An Arduino-controlled dinosaur runner with two physical jump/duck pads, built in Unity.**
 
-DinoPad turns two physical foot pads into **Jump** and **Duck** controls for a side-scrolling runner. An Arduino Uno reads the pads and sends their states over USB serial to a Unity desktop game. The game also works with a keyboard, mouse, or touch input, so you can try it without the hardware.
+DinoPad connects a simple **Arduino Uno** controller to a **Unity 6** game. Two normally-open floor pads provide **Jump** and **Duck** inputs over USB serial, while keyboard, mouse, and touch controls let anyone try the game without custom hardware.
 
-The project combines physical interface design, microcontroller firmware, serial communication, and game development.
+The project combines embedded programming, physical interface design, serial communication, and real-time game logic.
 
-## Features
+<img src="https://github.com/user-attachments/assets/2d4ac28c-f476-4a49-a956-f8250c069fdc" alt="DinoPad Unity game interface with runner, jump and duck controls, scoring and input history" width="810" />
 
-- **Two physical inputs:** Jump is triggered on a new press; Duck stays active while held.
-- **Arduino Uno + USB serial:** compact `S,jump,duck` messages at 115200 baud, with debounce and periodic updates.
-- **Playable without the controller:** keyboard (Space/W/Up to jump; S/Down to duck) and on-screen controls.
-- **Runner gameplay:** cactus and bird obstacles, increasing speed, collision detection, and restart.
-- **Scoring:** personal best, adjustable winning-score target (default 500), and win/game-over events.
-- **Input history:** shows the last N presses, including their source, score, and elapsed time (default N = 10).
-- **Connection feedback:** on-screen serial status and automatic reconnect attempts.
+## Highlights
 
-## Hardware and software
+- **Physical two-pad input:** Jump is activated on a new press; Duck stays active while held.
+- **Arduino-to-Unity serial link:** newline-terminated `S,jump,duck` messages at **115200 baud**, 25 ms switch debounce, and approximately 120 ms state heartbeats.
+- **No hardware required to try it:** keyboard, mouse, and touch alternatives to the physical switches.
+- **Runner gameplay:** randomly generated cactus and bird obstacles, increasing speed, collisions, restart, and a winning-score goal.
+- **Saved progress:** personal-best score and adjustable winning-score target via Unity `PlayerPrefs`.
+- **Input history:** the most recent configurable **N** button presses, including input source, score, and time since scene load.
+- **Connection feedback:** live Arduino status, automatic reconnection, and release of pressed states on disconnect.
 
-| Component | Purpose |
-| --- | --- |
-| Arduino Uno R3 (or compatible) | Reads the two switches |
-| 2 normally-open switches / pressure pads | Jump and Duck inputs |
-| USB data cable | Power and communication between Uno and computer |
-| Unity 6 desktop Editor | Runs the game |
-| Arduino IDE 2 | Uploads the Uno sketch |
+## Try DinoPad
 
-The project records **Unity Editor 6000.6.6f1** in `ProjectSettings/ProjectVersion.txt`. A compatible Unity 6 Editor may prompt to upgrade the project.
+The repository includes the **full Unity source project and Arduino firmware**. It does not include a pre-built executable.
 
-### Wiring
-
-```text
-Jump pad: Arduino D2 ── normally-open switch ── GND
-Duck pad: Arduino D3 ── normally-open switch ── GND
-Arduino:  USB cable ───────────────────────── computer
-```
-
-The Arduino sketch enables internal pull-up resistors, so pressing each pad connects its input to ground. Do not wire the input pins directly to 5 V. For more details, see [Hardware setup](docs/HARDWARE_SETUP.md).
-
-## Quick start
-
-### Option A — Play without Arduino
+### Play without an Arduino
 
 1. Clone or download this repository.
-2. Open **Unity Hub → Add project from disk**.
-3. Select the inner folder **`DinoPad_Unity_Project - Copy`**, which contains `Assets`, `Packages`, and `ProjectSettings`.
-4. Open it in a compatible Unity 6 Editor.
-5. Open `Assets/DinoPadGame/Scenes/DinoPadGame.unity`.
-6. In the Hierarchy, select **Dino Pad Game** and uncheck **Connect On Start** in the **Dino Pad Uno Serial** component if you aren't using an Uno.
-7. Press **Play**. Use Space/W/Up to jump and S/Down to duck, or click the on-screen pads.
+2. In **Unity Hub**, select **Add project from disk**.
+3. Choose the inner folder **`DinoPad_Unity_Project - Copy`**, which contains `Assets`, `Packages`, and `ProjectSettings`.
+4. Open it in Unity **6000.6.6f1** (the recorded Editor version), or a compatible Unity 6 Editor.
+5. Open **`Assets/DinoPadGame/Scenes/DinoPadGame.unity`**.
+6. Select **Dino Pad Game** in the Hierarchy and disable **Connect On Start** on its **Dino Pad Uno Serial** component.
+7. Press **Play**. Use **Space / W / Up arrow** for Jump and **S / Down arrow** for Duck.
 
-### Option B — Play with the physical pads
+The scene contains an on-screen **START** button, **JUMP** and **DUCK** controls, and a **PLAY AGAIN** option after a run.
 
-1. Connect the Jump switch between **D2 and GND**, and the Duck switch between **D3 and GND**.
-2. In Arduino IDE 2, open [DinoPad_Uno.ino](DinoPad_Unity_Project%20-%20Copy/Assets/DinoPadGame/Arduino/DinoPad_Uno.ino), choose **Arduino Uno** and the correct serial port, and upload the sketch.
-3. Optionally verify output using **Serial Monitor at 115200 baud**, then **close it** so Unity can open the same port.
-4. In Unity, set **Edit → Project Settings → Player → Other Settings → API Compatibility Level** to **.NET Framework** for desktop serial support.
-5. Select the **Dino Pad Game** GameObject and set its **Dino Pad Uno Serial** component:
-   - **Port Name:** the Uno port, such as `COM4` on Windows or `/dev/cu.usbmodem...` on macOS. `AUTO` only works when exactly one serial port is detected.
-   - **Baud Rate:** `115200`
-   - **Connect On Start:** enabled
-6. Press **Play**, then check the on-screen `UNO USB` status.
+### Play with the physical pads
 
-> The Uno is a USB **serial device**, not a keyboard emulator. Direct serial input here targets desktop Unity; browser/WebGL builds are not supported by this input path.
+You will need an Arduino Uno or compatible board, two normally-open switches or pressure pads, and a USB data cable.
+
+```text
+Jump pad: Uno D2 ──[normally-open switch]── GND
+Duck pad: Uno D3 ──[normally-open switch]── GND
+Arduino Uno ─────────── USB cable ───────── Computer
+```
+
+1. Wire **Jump** from D2 to GND and **Duck** from D3 to GND.
+2. Open and upload [**DinoPad_Uno.ino**](DinoPad_Unity_Project%20-%20Copy/Assets/DinoPadGame/Arduino/DinoPad_Uno.ino) with Arduino IDE.
+3. Optional: verify lines like `S,0,0`, `S,1,0`, and `S,0,1` in **Serial Monitor at 115200 baud**, then **close Serial Monitor**.
+4. In Unity's **Player → Other Settings**, use **.NET Framework** for desktop serial support.
+5. On **Dino Pad Game → Dino Pad Uno Serial**, set the Uno's **Port Name**, keep **Baud Rate = 115200**, and enable **Connect On Start**.
+6. Press Play and check the on-screen **UNO USB** connection status.
+
+The sketch configures `INPUT_PULLUP`: **LOW means pressed**, because each switch closes its Arduino input to GND. No external pull-up resistor is needed. **Do not wire a pad across 5 V and GND.**
+
+For a complete wiring diagram and troubleshooting steps, see the [hardware setup guide](docs/HARDWARE_SETUP.md).
 
 ## Controls
 
-| Action | Arduino pad | Keyboard |
+| Action | Keyboard / mouse / touch | Arduino |
 | --- | --- | --- |
-| Jump / start | Jump (D2) | Space, W, Up |
-| Duck (hold) | Duck (D3) | S, Down |
-| Retry after game over | On-screen Play Again | On-screen Play Again |
+| Start or jump | Space, W, Up arrow; on-screen JUMP or START | Jump pad on **D2** |
+| Duck (hold) | S, Down arrow; on-screen DUCK | Duck pad on **D3** |
+| Retry | PLAY AGAIN button or new Jump press | Jump pad |
+| Adjust winning score | On-screen **− / +** controls | — |
+| Clear press history | On-screen **CLEAR** | — |
 
-The on-screen Jump and Duck controls also support mouse and touch.
+Jump triggers once per press; Duck is held for as long as its switch is pressed. The game also accepts clicking/tapping in the play field to jump while running.
 
-For details on the Arduino-to-Unity data flow, thread handling, and gameplay responsibilities, see [System architecture](docs/SYSTEM_ARCHITECTURE.md).
+**Winning-score note:** The included demo scene sets the target to **2,000**. The C# component declares a fallback of **500** for newly created scenes. A previously saved goal, if any, overrides the scene setting on startup. See the [user guide](docs/USER_GUIDE.md) for details.
 
-## How it works
+## How the hardware and game communicate
 
 ```mermaid
 flowchart LR
-    A["Jump switch · D2"] --> C["Arduino Uno"]
-    B["Duck switch · D3"] --> C
-    C -->|"USB serial · 115200 baud"| D["DinoPadUnoSerial.cs"]
-    D --> E["DinoPadGame.cs"]
-    F["Keyboard / touch / mouse"] --> E
-    E --> G["Runner · score · press history"]
+    A["Jump pad (D2)"] --> U["Arduino Uno"]
+    B["Duck pad (D3)"] --> U
+    U -->|"USB serial · 115200 baud"| S["DinoPadUnoSerial.cs"]
+    S -->|"Validated press/release states"| G["DinoPadGame.cs"]
+    K["Keyboard / mouse / touch"] --> G
+    G --> O["Gameplay · score · input history"]
 ```
 
-The Arduino sends complete lines such as `S,1,0` (jump pressed, duck released). `DinoPadUnoSerial.cs` reads them on a worker thread and applies inputs in Unity's main update loop. Jump fires on a press transition, while Duck remains active for as long as the pad is held. The Unity game uses built-in IMGUI drawing, so no external sprites or UI packages are required to see the game.
+The Uno sends state messages such as `S,1,0` for Jump pressed and Duck released. `DinoPadUnoSerial.cs` reads packets in a background thread and applies the resulting inputs during Unity's main-thread updates. The renderer uses Unity's built-in IMGUI drawing; no external sprite assets are needed to play.
+
+## Documentation
+
+| Guide | Contents |
+| --- | --- |
+| [User guide](docs/USER_GUIDE.md) | Gameplay, controls, score settings, input history, and UI indicators |
+| [Hardware setup](docs/HARDWARE_SETUP.md) | Switch wiring, firmware upload, serial testing, and troubleshooting |
+| [System architecture](docs/SYSTEM_ARCHITECTURE.md) | Firmware–Unity data flow, component responsibilities, and message protocol |
+| [Testing checklist](docs/TESTING.md) | Manual keyboard, Arduino, integration, and persistence test plan |
+| [Building for desktop](docs/BUILDING.md) | Adding the scene to Unity build profiles and exporting a standalone app |
 
 ## Repository layout
 
@@ -96,7 +99,11 @@ The Arduino sends complete lines such as `S,1,0` (jump pressed, duck released). 
 DinoPad/
 ├── README.md
 ├── docs/
-│   └── HARDWARE_SETUP.md
+│   ├── USER_GUIDE.md
+│   ├── HARDWARE_SETUP.md
+│   ├── SYSTEM_ARCHITECTURE.md
+│   ├── TESTING.md
+│   └── BUILDING.md
 └── DinoPad_Unity_Project - Copy/
     ├── Assets/DinoPadGame/
     │   ├── Arduino/DinoPad_Uno.ino
@@ -108,19 +115,16 @@ DinoPad/
     └── ProjectSettings/
 ```
 
-Open the **inner Unity project folder**, not the repository root. Its existing name is preserved to avoid moving project files unnecessarily.
+**Open the inner Unity project**, not the repository root.
 
-## Troubleshooting
+## Known limitations and project status
 
-- **Port access denied:** Close Arduino IDE Serial Monitor/Plotter and any other application using the port.
-- **No USB connection:** Verify the USB data cable, port, 115200 baud, and Arduino sketch.
-- **Multiple ports detected:** Specify the exact port in Unity rather than using `AUTO`.
-- **`System.IO.Ports` compilation errors:** Use the desktop build target and `.NET Framework` API compatibility.
-- **Board connects but pad doesn't respond:** Briefly connect D2 or D3 to GND to isolate wiring problems.
-- **Want to play without hardware:** Disable **Connect On Start** and use the keyboard.
+- The current repository contains **source code**, not a packaged game executable, `.unitypackage`, or controller enclosure CAD/3D-print files.
+- The checked-in Unity **build scene list is empty**; add `Assets/DinoPadGame/Scenes/DinoPadGame.unity` in **Build Profiles** before exporting. Follow the [build guide](docs/BUILDING.md).
+- Serial hardware input targets **desktop Unity**, not WebGL/browser builds.
+- Unity Editor execution, the full physical pad assembly, and standalone builds have **not been independently verified as part of this documentation update**. Use the [manual testing checklist](docs/TESTING.md) to record successful tests.
+- No open-source license file is included yet; reuse terms should be decided by the repository owner.
 
-## Project status
+---
 
-This repository provides **Unity source code and Arduino firmware**, not a packaged executable, `.unitypackage`, or 3D-printable controller enclosure. Full Unity Editor execution and physical hardware testing have **not** been verified as part of this documentation update.
-
-<img width="810" height="641" alt="image" src="https://github.com/user-attachments/assets/2d4ac28c-f476-4a49-a956-f8250c069fdc" />
+**Built with:** Arduino Uno · C# · Unity 6 · USB serial · 3D-printed/physical controller prototyping
