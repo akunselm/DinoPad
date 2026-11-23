@@ -1,38 +1,72 @@
 DINO PAD — UNITY 6 SOURCE PROJECT
+=================================
 
-This GitHub repository contains a complete Unity source project inside:
-  DinoPad_Unity_Project - Copy/
+This repository contains the complete source project in:
+    DinoPad_Unity_Project - Copy/
 
-It is NOT a .unitypackage or a pre-built executable.
+It is a Unity project, NOT a pre-built desktop executable or .unitypackage.
+The project records Unity Editor version 6000.6.6f1.
 
 KEYBOARD-ONLY QUICK START
-1) Clone/download this GitHub repository and extract it if necessary.
-2) Open Unity Hub > Add project from disk.
-3) Select the inner DinoPad_Unity_Project - Copy folder (contains Assets, Packages, ProjectSettings).
-4) Open in a compatible Unity 6 Editor. Stored editor version: 6000.6.6f1.
+-------------------------
+1) Clone/download the GitHub repository.
+2) In Unity Hub, choose Add project from disk.
+3) Select the INNER DinoPad_Unity_Project - Copy folder
+   (it contains Assets, Packages, and ProjectSettings).
+4) Open the project using Unity 6000.6.6f1 or a compatible Unity 6 Editor.
 5) Open Assets/DinoPadGame/Scenes/DinoPadGame.unity.
-6) Select the Dino Pad Game object. If using no Arduino, uncheck Connect On Start in the Dino Pad Uno Serial component.
-7) Press Play. Use Space/W/Up to jump; S/Down to duck. Mouse/touch pads work too.
+6) Select the Dino Pad Game object. Disable Connect On Start on its
+   Dino Pad Uno Serial component for keyboard-only testing.
+7) Press Play. Space/W/Up = Jump; S/Down (hold) = Duck.
+   Mouse and touch controls are available on screen.
 
 ARDUINO PAD QUICK START
-1) Wire a normally-open Jump switch between Arduino D2 and GND.
-2) Wire a normally-open Duck switch between Arduino D3 and GND.
-3) Upload Assets/DinoPadGame/Arduino/DinoPad_Uno.ino using Arduino IDE 2.
-4) Set Unity Player > Other Settings > API Compatibility Level to .NET Framework for desktop serial support.
-5) Set Dino Pad Uno Serial > Port Name to the actual port. AUTO only works with exactly one serial port. Baud Rate: 115200.
-6) Close the Arduino IDE Serial Monitor/Plotter before pressing Play in Unity.
+-----------------------
+1) Connect a normally-open Jump switch between Arduino Uno D2 and GND.
+2) Connect a normally-open Duck switch between Arduino Uno D3 and GND.
+3) Upload Assets/DinoPadGame/Arduino/DinoPad_Uno.ino with Arduino IDE.
+4) In Unity Player > Other Settings, set the desktop API Compatibility
+   Level to .NET Framework to use System.IO.Ports.
+5) Set Dino Pad Uno Serial > Port Name to the actual Uno serial port.
+   AUTO works only when exactly one serial port is detected.
+   Baud Rate = 115200; Connect On Start = enabled.
+6) Close Arduino Serial Monitor/Plotter before pressing Play in Unity.
+7) Check the in-game UNO USB connection indicator.
 
-SERIAL PROTOCOL
+SERIAL MESSAGES
+---------------
 S,0,0 = neither pad pressed
 S,1,0 = Jump pressed
 S,0,1 = Duck pressed
 S,1,1 = both pressed
 
-The game retains a history of the last N button presses (default 10).
-The winning score starts at 500 unless a different goal has been saved.
+The sketch enables internal pull-up resistors; switches connect D2/D3
+to GND when pressed. Do not short 5 V to GND.
 
-For complete setup, hardware wiring, troubleshooting, and repository layout:
-  ../README.md                         (repository-root README)
-  ../docs/HARDWARE_SETUP.md           (hardware guide)
+GAMEPLAY NOTES
+--------------
+- The demo scene sets Winning Score to 2000. The script's fallback for
+  newly added components is 500. A saved PlayerPrefs goal overrides
+  the Inspector value at startup.
+- Goal controls step by 50 unless changed in the Inspector.
+- The scene retains a history of the last N button presses (default 10).
+- The history timestamps show time since the scene loaded.
+- Best score and adjusted goal persist through Unity PlayerPrefs.
 
-Unity source files and the Arduino sketch remain in this project; no bundled executable or 3D-print files are required to play the keyboard version.
+BUILDING A DESKTOP EXECUTABLE
+------------------------------
+The checked-in build scene list is EMPTY. Add:
+    Assets/DinoPadGame/Scenes/DinoPadGame.unity
+to your Unity Build Profiles before exporting a build.
+
+DOCUMENTATION (relative to this folder)
+---------------------------------------
+    ../README.md                       Project overview and screenshot
+    ../docs/USER_GUIDE.md              Gameplay and options
+    ../docs/HARDWARE_SETUP.md          Electronics and serial setup
+    ../docs/SYSTEM_ARCHITECTURE.md     Hardware/software design
+    ../docs/TESTING.md                 Manual verification checklist
+    ../docs/BUILDING.md                Build profile and desktop export
+
+Running in the Editor and hardware integration still need verification
+on your own computer and physical pads.
